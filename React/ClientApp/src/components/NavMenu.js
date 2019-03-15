@@ -1,7 +1,38 @@
 import React, { Component } from 'react';
 import { Collapse, Container, Navbar, NavbarBrand, NavbarToggler, NavItem, NavLink } from 'reactstrap';
 import { Link } from 'react-router-dom';
+import {userService} from "./services/UserService.js";
 import './NavMenu.css';
+
+function Greeting(props) {
+    if (userService.authorize()) {
+      return <UserGreeting />;
+    }
+    return <GuestGreeting />;
+  }
+
+  function UserGreeting(props) {
+  return <React.Fragment> 
+          <NavItem>
+            <NavLink tag={Link} className="text-dark" to="#">{JSON.parse(localStorage.getItem('currentUser')).email}</NavLink>
+          </NavItem>
+          <NavItem>
+            <NavLink tag={Link} className="text-dark" to="#" onClick={userService.logout}>Logout</NavLink>
+          </NavItem>
+        </React.Fragment>;
+  }
+
+  function GuestGreeting(props) {
+  return <React.Fragment>  
+          <NavItem>
+            <NavLink tag={Link} className="text-dark" to="/login">Login</NavLink>
+          </NavItem>
+          <NavItem>
+            <NavLink tag={Link} className="text-dark" to="/register">Register</NavLink>
+          </NavItem>
+        </React.Fragment> ;
+  }
+
 
 export class NavMenu extends Component {
   static displayName = NavMenu.name;
@@ -10,10 +41,12 @@ export class NavMenu extends Component {
     super(props);
 
     this.toggleNavbar = this.toggleNavbar.bind(this);
+
     this.state = {
       collapsed: true
     };
   }
+
 
   toggleNavbar () {
     this.setState({
@@ -28,17 +61,17 @@ export class NavMenu extends Component {
           <Container>
             <NavbarBrand tag={Link} to="/">React</NavbarBrand>
             <NavbarToggler onClick={this.toggleNavbar} className="mr-2" />
-            <Collapse className="d-sm-inline-flex flex-sm-row-reverse" isOpen={!this.state.collapsed} navbar>
+            <Collapse className="d-sm-inline-flex flex-sm-row" isOpen={!this.state.collapsed} navbar>
               <ul className="navbar-nav flex-grow">
                 <NavItem>
                   <NavLink tag={Link} className="text-dark" to="/">Home</NavLink>
                 </NavItem>
                 <NavItem>
-                  <NavLink tag={Link} className="text-dark" to="/login">Login</NavLink>
+                  <NavLink tag={Link} className="text-dark" to="/tasks">Tasks</NavLink>
                 </NavItem>
-                <NavItem>
-                  <NavLink tag={Link} className="text-dark" to="/register">Register</NavLink>
-                </NavItem>
+              </ul>
+              <ul className="navbar-nav flex-grow ml-auto">
+                <Greeting/>
               </ul>
             </Collapse>
           </Container>

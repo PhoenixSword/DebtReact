@@ -14,8 +14,8 @@ import {
 import {userService} from "./services/UserService.js";
 import {Alert} from "./Alert.js";
 
-export class Login extends Component {
-  static displayName = Login.name;
+export class Register extends Component {
+  static displayName = Register.name;
   constructor (props) {
     super(props);
     this.service = userService;
@@ -23,7 +23,6 @@ export class Login extends Component {
     this.handlePasswordChange = this.handlePasswordChange.bind(this);
     this.handleSubmit = this.handleSubmit.bind(this);
     this.state = {alert: null, redirect: false};
-    this.temp = "";
   }
 
   handleEmailChange(e) {
@@ -32,14 +31,23 @@ export class Login extends Component {
   handlePasswordChange(e) {
      this.setState({password: e.target.value});
   }
+  handlePasswordConfirmChange(e) {
+     this.setState({passwordConfirm: e.target.value});
+  }
 
   handleSubmit(e){
     e.preventDefault();
-    this.service.login({'email': this.email.value, 'password': this.password.value}).then(response => 
-    this.setState(state => ({
-      alert: response,
-      redirect: true
-    })));
+    if(this.password.value === this.passwordConfirm.value)
+    {
+      this.service.register({'email': this.email.value, 'password': this.password.value})
+      .then(response => 
+        this.setState(state => ({
+          alert: response,
+          redirect: true
+        })
+      )
+      );
+    }
   }
 
   render () {
@@ -55,7 +63,7 @@ export class Login extends Component {
             <MDBCardBody>
               <MDBCardHeader className=" form-header deep-blue-gradient rounded">
                 <h3 className="my-3">
-                  <MDBIcon icon="lock" /> Login:
+                  <MDBIcon icon="lock" /> Register:
                 </h3>
               </MDBCardHeader>
               <form onSubmit={this.handleSubmit}>
@@ -76,6 +84,14 @@ export class Login extends Component {
                     </div>
                     <input type="password" className="form-control" placeholder="Password" aria-label="Password" aria-describedby="basic-addon" ref={node => (this.password = node)} />
                   </div>
+                  <div className="input-group mb-2">
+                    <div className="input-group-prepend">
+                      <span className="input-group-text" id="basic-addon">
+                        <MDBIcon icon="key" />
+                      </span>
+                    </div>
+                    <input type="password" className="form-control" placeholder="PasswordConfirm" aria-label="PasswordConfirm" aria-describedby="basic-addon" ref={node => (this.passwordConfirm = node)} />
+                  </div>
                 </div>
 
               <div className="text-center mt-4">
@@ -83,14 +99,14 @@ export class Login extends Component {
                   color="light-blue"
                   className="mb-3"
                   type="submit">
-                  Login
+                  Register
                 </MDBBtn>
               </div>
               </form>
               <hr/>
               <div className=" text-center">
                 <div className="font-weight-light">
-                  <p>Not a member? Sign Up</p>
+                  <p>Alreay a member? Login</p>
                 </div>
               </div>
             </MDBCardBody>
