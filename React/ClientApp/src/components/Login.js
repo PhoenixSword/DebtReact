@@ -13,7 +13,7 @@ import {
   MDBInput
 } from "mdbreact";
 
-import {userService} from "./Service.js";
+import {userService} from "./services/UserService";
 export class Login extends Component {
   static displayName = Login.name;
   constructor (props) {

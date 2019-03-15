@@ -1,6 +1,6 @@
 import React, { Component } from 'react';
 import { MDBBtn } from "mdbreact";
-import {userService} from "./Service.js";
+import {userService} from "./services/UserService";
 import Counter from "./Counter";
 export class Home extends Component {
   static displayName = Home.name;

@@ -21,7 +21,7 @@ function login() {
     headers: {
     'Content-Type': 'application/json'
     },
-    body: JSON.stringify({'email': 'qwe@qwe', 'password': 'qwe123'}) 
+    body: JSON.stringify({'email': 'qwe@qwe', 'password': '123321'}) 
   })
 .then((resp)=>{ return resp.text() })
 .then((json)=>{ localStorage.setItem('currentUser', json); })
