@@ -5,7 +5,6 @@ export const taskService={
 
 function getToken() {
     let token = localStorage.getItem('currentUser') && JSON.parse(localStorage.getItem('currentUser')).token
-    console.log(token);
     return token;
   }
   
@@ -15,9 +14,6 @@ function getAll() {
         method: 'GET',
         headers: {'Authorization': 'Bearer ' + getToken()}
     };
-
-    console.log(requestOptions);
-
     return fetch('/api/tasks', requestOptions).then(handleResponse);
 }
 
