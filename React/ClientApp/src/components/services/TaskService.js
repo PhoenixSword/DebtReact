@@ -1,6 +1,7 @@
 export const taskService={
   getAll,
-  getToken
+  getToken,
+  remove
 }
 
 function getToken() {
@@ -16,6 +17,16 @@ function getAll() {
     };
     return fetch('/api/tasks', requestOptions).then(handleResponse);
 }
+
+
+function remove(id) {
+    const requestOptions = {
+        method: 'DELETE',
+        headers: {'Authorization': 'Bearer ' + getToken()}
+    };
+    return fetch(`/api/tasks/${id}`, requestOptions).then(handleResponse);
+}
+
 
 function handleResponse(response) {
     return response.text().then(text => {

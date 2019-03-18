@@ -20,3 +20,11 @@ html {
 button {
 	border-radius: 30px!important;
 }
+.btn{
+	border-radius: 30px!important;
+}
+
+body{
+	background: url('~/bg.jpg')no-repeat fixed;
+  background-size: cover;
+}
