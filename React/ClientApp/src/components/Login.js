@@ -69,12 +69,10 @@ export class Login extends Component {
                     values,
                     touched,
                     errors,
-                    dirty,
                     isSubmitting,
                     handleChange,
                     handleBlur,
                     handleSubmit,
-                    handleReset,
                   } = props;
                   return (
                     <form onSubmit={handleSubmit}>

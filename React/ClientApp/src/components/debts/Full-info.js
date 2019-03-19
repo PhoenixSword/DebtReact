@@ -1,9 +1,5 @@
 import React, { Component } from 'react';
 import { debtService } from "../services/DebtService";
-import { MDBCard, MDBCardHeader, MDBCardBody, MDBTableEditable, MDBBtn, } from "mdbreact";
-import { Link } from 'react-router-dom';
-
-import { MDBTable, MDBTableBody, MDBTableHead } from 'mdbreact';
 import './Full-info.css';
 
 
@@ -30,12 +26,14 @@ function FindValue(props) {
     const m2 = props.m2;
     var res = 0;
 
-    {debts.map((debt) =>
-      {debt.member1 === m1 && debt.member2 === m2 ? res = debt.money : null}
-    )}
-    {debts.map((debt) =>
-      {debt.member1 === m2 && debt.member2 === m1 ? res = (debt.money * (-1)) : null}
-    )}
+    debts.map((debt) =>
+    {
+        debt.member1 === m1 && debt.member2 === m2 && (res = debt.money)
+        debt.member1 === m2 && debt.member2 === m1 && (res = (debt.money * (-1)))
+        return null
+    }
+    )
+   
 
     return <td>{res}</td>;
   }

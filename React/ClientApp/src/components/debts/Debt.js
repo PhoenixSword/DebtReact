@@ -1,9 +1,6 @@
 import React, { Component } from 'react';
 import { debtService } from "../services/DebtService";
-import { MDBCard, MDBCardHeader, MDBCardBody, MDBTableEditable, MDBBtn, } from "mdbreact";
-import { Link } from 'react-router-dom';
 
-import { MDBTable, MDBTableBody, MDBTableHead } from 'mdbreact';
 
 function DebtItem(props) {
 
