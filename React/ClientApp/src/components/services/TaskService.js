@@ -1,7 +1,9 @@
 export const taskService={
   getAll,
   getToken,
-  remove
+  remove,
+  get,
+  save
 }
 
 function getToken() {
@@ -27,6 +29,26 @@ function remove(id) {
     return fetch(`/api/tasks/${id}`, requestOptions).then(handleResponse);
 }
 
+
+function get(taskId) {
+    const requestOptions = {
+        method: 'GET',
+        headers: {'Authorization': 'Bearer ' + getToken()}
+    };
+    return fetch(`/api/tasks/AddOrEditTask/${taskId}`, requestOptions).then(handleResponse);
+}
+
+function save(task) {
+     const requestOptions = {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json',
+            'Authorization': 'Bearer ' + getToken()
+        },
+        body: JSON.stringify(task)
+    };
+    return fetch(`/api/tasks`, requestOptions).then(handleResponse);
+}
 
 function handleResponse(response) {
     return response.text().then(text => {

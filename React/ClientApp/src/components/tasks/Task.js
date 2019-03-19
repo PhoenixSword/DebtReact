@@ -1,15 +1,14 @@
 import React, { Component } from 'react';
 import { taskService } from "../services/TaskService";
-import { MDBCard, MDBCardHeader, MDBCardBody, MDBTableEditable, MDBBtn, } from "mdbreact";
-
-import { MDBTable, MDBTableBody, MDBTableHead } from 'mdbreact';
+import { MDBBtn, } from "mdbreact";
+import { Link } from 'react-router-dom';
 
 function TaskMembers(props) {
 
   const member = (
     <td>
     {props.members.map((post) =>
-      <React.Fragment key={post.id}>{post.name}&nbsp;</React.Fragment>
+      <Link key={post.id} to={`/debts?memberId=${post.id}`}>{post.name}&nbsp;</Link>
       )}
     </td>
     );
@@ -22,12 +21,11 @@ function TaskItem(props) {
   const rows = (
     <tbody>
     {props.taskItems.map((post, index) =>
-      <tr key={post.id}>
-      <td>{index+1}</td>
-      <td>{post.name}</td>
+      <tr key={post.id} id={post.id}>
+      <td><Link to={`/AddOrEditTasks?taskId=${index+1}`}>{post.name}</Link></td>
       <td>{post.sum}</td>
       <TaskMembers members={post.members}/>
-      <td><MDBBtn style={{padding: "5px 20px"}} onClick={() => Task.remove(post.id)} color="danger">Remove</MDBBtn></td>
+      <td><MDBBtn style={{padding: "5px 20px"}} onClick={Task.remove} color="danger">Remove</MDBBtn></td>
       </tr>
       )}
     </tbody>
@@ -43,15 +41,15 @@ export class Task extends Component {
   constructor(props) {
     super(props);
     this.service = taskService;
-
     this.state = {
       data: []
     }
   }
 
-  static remove(id)
-  {
-    taskService.remove(id);
+  static remove(e){
+    var index = e.target.parentNode.parentNode.id;
+    taskService.remove(index);
+    e.target.parentNode.parentNode.remove();
   }
 
   componentDidMount() {
@@ -60,18 +58,18 @@ export class Task extends Component {
     }));
   }
 
+
   render() {
     return (
       <div className="card">
         <h3 className="blue-gradient white-text card-header text-center font-weight-bold text-uppercase py-4">
         Tasks
         </h3>
-        <div className="card-body text-center">
-          <div className="table-responsive">
+        <div className="card-body">
+          <div className="table-responsive text-center">
             <table className="table">
               <thead className="">
                 <tr>
-                  <th className="">#</th>
                   <th className="">Name</th>
                   <th className="">Money</th>
                   <th className="">Members</th>
@@ -81,6 +79,7 @@ export class Task extends Component {
               <TaskItem taskItems={this.state.data}/>
             </table>
           </div>
+          <Link to="/AddOrEditTasks"><MDBBtn color="primary">Add new</MDBBtn></Link>
         </div>
       </div>
       );
