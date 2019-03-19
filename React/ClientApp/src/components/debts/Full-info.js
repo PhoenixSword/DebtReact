@@ -34,7 +34,6 @@ function FindValue(props) {
     }
     )
    
-
     return <td>{res}</td>;
   }
 

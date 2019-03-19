@@ -45,6 +45,10 @@ export class AddOrEditTasks extends Component {
     this.add = this.add.bind(this);
     this.save = this.save.bind(this);
     this.remove = this.remove.bind(this);
+    this.changeSum = this.changeSum.bind(this);
+    this.changeDebt = this.changeDebt.bind(this);
+
+    this.debtEditInputs = [];
   }
 
   componentDidMount() {
@@ -156,6 +160,84 @@ export class AddOrEditTasks extends Component {
     stateCopy.errors.members[index].debt = error;
   }
 
+  changeSum(sum) {
+    var sumInput = sum;
+    var depositInputs = this.state.task.members;
+    console.log(depositInputs);
+    if (depositInputs.length === 0) return;
+    depositInputs[0].deposit = sumInput;
+
+   if (this.debtEditInputs.length !== 0) {
+     var debtsEditSum = 0;
+     debtsEditSum = this.CalculateDebtSum(this.debtEditInputs, this.debtEditInputs.length);
+     sumInput -= debtsEditSum;
+   }
+
+   var debtsInputs = this.state.task.members.filter(n=>!this.debtEditInputs.includes(n));
+   var debtsLength = debtsInputs.length;
+   if(debtsLength===0) return;
+   var basicValueWithError = parseFloat((sumInput / debtsLength).toFixed(2));
+
+   var sumWithError = basicValueWithError * debtsLength;
+
+   var error = parseFloat((sumInput - sumWithError).toFixed(2));
+
+   var iterator = 0;
+   if (error !== 0) {
+     var sign = (error >= 0) ? true : false;
+     while (error !== 0) {
+       switch (sign) {
+         case false:
+           error = parseFloat((error + 0.01).toFixed(2));
+           debtsInputs[iterator].debt = parseFloat((basicValueWithError - 0.01).toFixed(2));
+           break;
+
+         case true:
+           error = parseFloat((error - 0.01).toFixed(2));
+           debtsInputs[iterator].debt = parseFloat((basicValueWithError + 0.01).toFixed(2));
+           break;
+          default:
+            break;
+       }
+       iterator++;
+     }
+   }
+
+    while (iterator < debtsLength) {
+      debtsInputs[iterator].debt = basicValueWithError;
+     iterator++;
+    }
+    this.setState(prevState => ({
+      task: {
+          ...prevState.task,
+          members: this.state.task.members
+      }
+  }))
+    //this.sumValidator();
+ }
+
+  CalculateDepositSum(inputs, length) {
+    var sum = 0;
+    for (var iterator = 0; iterator < length; iterator++) {
+      sum += parseFloat(inputs[iterator].deposit);
+    }
+    return parseFloat(sum.toFixed(2));
+  }
+
+  CalculateDebtSum(inputs, length) {
+    var sum = 0;
+    for (var iterator = 0; iterator < length; iterator++) {
+      sum += parseFloat(inputs[iterator].debt);
+    }
+    return parseFloat(sum.toFixed(2));
+  }
+
+  changeDebt(index) {
+    //this.sumValidator();
+    if(this.debtEditInputs.indexOf(this.state.task.members[index])===-1)
+    this.debtEditInputs.push(this.state.task.members[index]);
+  }
+
   onChangeTask(e) {
     var val = e.target.value;
     switch(e.target.name)
@@ -169,6 +251,7 @@ export class AddOrEditTasks extends Component {
       default:
         break;
     }
+    this.changeSum(val);
   }
 
   onChangeMembers(e){
@@ -192,6 +275,7 @@ export class AddOrEditTasks extends Component {
         break;
       case "debt":
         this.validateMemberDebt(val, index, stateCopy);
+        this.changeDebt(index);
         break;
       default:
         break;
@@ -217,7 +301,9 @@ export class AddOrEditTasks extends Component {
       errors: {
           ...prevState.errors,
           members: [...prevState.errors.members, Empty()]}
-    }))
+    }), () => {
+      this.changeSum(this.state.task.sum)
+    })
   }
 
   remove(e){
