@@ -31,11 +31,12 @@ function FindValue(props) {
     var res = 0;
 
     {debts.map((debt) =>
-      {debt.member1 === m1 && debt.member2 === m2 ? res = debt.money : null}
+      {
+        debt.member1 === m1 && debt.member2 === m2 ? res = debt.money : null
+        debt.member1 === m2 && debt.member2 === m1 ? res = (debt.money * (-1)) : null
+      }
     )}
-    {debts.map((debt) =>
-      {debt.member1 === m2 && debt.member2 === m1 ? res = (debt.money * (-1)) : null}
-    )}
+
 
     return <td>{res}</td>;
   }
