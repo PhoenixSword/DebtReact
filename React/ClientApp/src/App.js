@@ -6,7 +6,8 @@ import { Login } from './components/Login';
 import { Register } from './components/Register';
 import { Task } from './components/tasks/Task';
 import { AddOrEditTasks } from './components/tasks/AddOrEditTasks';
-import { Counter } from './components/Counter';
+import { Debt } from './components/debts/Debt';
+import { Full } from './components/debts/Full-info';
 export default class App extends Component {
   static displayName = App.name;
 
@@ -18,7 +19,8 @@ export default class App extends Component {
         <Route path='/register' component={Register} />
         <Route path='/tasks' component={Task} />
         <Route path='/AddOrEditTasks' component={AddOrEditTasks} />
-        <Route path='/counter' component={Counter} />
+        <Route path='/debts' component={Debt} />
+        <Route path='/full-info' component={Full} />
       </Layout>
     );
   }
