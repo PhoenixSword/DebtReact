@@ -7,6 +7,8 @@ import { Counter } from './components/Counter';
 import { Login } from './components/Login';
 import { Register } from './components/Register';
 import { Task } from './components/tasks/Task';
+import { Debt } from './components/debts/Debt';
+import { Full } from './components/debts/Full-info';
 export default class App extends Component {
   static displayName = App.name;
 
@@ -19,6 +21,8 @@ export default class App extends Component {
         <Route path='/counter' component={Counter} />
         <Route path='/fetch-data' component={FetchData} />
         <Route path='/tasks' component={Task} />
+        <Route path='/debts' component={Debt} />
+        <Route path='/full-info' component={Full} />
       </Layout>
     );
   }
