@@ -2,6 +2,7 @@ import React, { Component } from 'react';
 import { taskService } from "../services/TaskService";
 import { MDBBtn } from "mdbreact";
 import { Redirect } from 'react-router'
+import update from 'immutability-helper';
 
 const Member = (taskId) => 
 {
@@ -85,8 +86,6 @@ export class AddOrEditTasks extends Component {
 
   checkErrors()
   {
-    console.log(this.state.errors)
-    console.log(Errors(this.state.task.members.length))
     if (JSON.stringify(this.state.errors) == JSON.stringify(Errors(this.state.task.members.length)))
     return false
     return true
@@ -113,13 +112,9 @@ export class AddOrEditTasks extends Component {
 
   validateSum(value) {
     var array = this.state.task.members;
-    
-    this.setState(prevState => ({
-              task: {
-                  ...prevState.task,
-                  sum: value
-              }
-          }))
+
+    //this.state.task.members[0].deposit = value;
+
     let error = '';
     if (!value) error = 'Required'; 
     if(value < 0) error = "Min value is 0";
@@ -134,6 +129,14 @@ export class AddOrEditTasks extends Component {
                   sum: error
               }
           }))
+
+    this.setState(update(this.state,{ task: {members: {0: {deposit: {$set: value}}}}}), () => this.setState(prevState => ({
+      task: {
+          ...prevState.task,
+          sum: value
+      }
+  }), () => this.changeSum()))
+    
   }
 
   validateMemberName(value, index, stateCopy)
@@ -207,12 +210,11 @@ export class AddOrEditTasks extends Component {
     stateCopy.errors.sum = sumError;
   }
 
-  changeSum(sum) {
-    var sumInput = sum;
+  changeSum() {
+    var sumInput = this.state.task.sum;
     var depositInputs = this.state.task.members;
     if (depositInputs.length === 0) return;
-    depositInputs[0].deposit = sumInput;
-
+  
    if (this.debtEditInputs.length !== 0) {
      var debtsEditSum = 0;
      debtsEditSum = this.calculateDebtSum(this.debtEditInputs, this.debtEditInputs.length);
@@ -293,7 +295,6 @@ export class AddOrEditTasks extends Component {
         break;
       case "sum":
         this.validateSum(val);
-        this.changeSum(val);
         break;
       default:
         break;
