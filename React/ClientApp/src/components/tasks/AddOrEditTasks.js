@@ -2,6 +2,8 @@ import React, { Component } from 'react';
 import { taskService } from "../services/TaskService";
 import { MDBBtn } from "mdbreact";
 import { Redirect } from 'react-router'
+import update from 'react-addons-update'; 
+
 const Member = (taskId) => 
 {
   return {id: "00000000-0000-0000-0000-000000000000", name: "", deposit: 0, debt: 0, taskId: taskId || "00000000-0000-0000-0000-000000000000"}
@@ -329,7 +331,9 @@ export class AddOrEditTasks extends Component {
 
     this.state.errors.members.splice(index, 1);
     this.state.task.members.splice(index, 1)
-    this.state.errors.members[0].deposit = '';
+
+
+
     this.setState(prevState => ({
           task: {
               ...prevState.task,
@@ -339,10 +343,19 @@ export class AddOrEditTasks extends Component {
               ...prevState.errors,
               members: this.state.errors.members
           }
-      }), ()=> {this.changeSum();this.validateDuplicateNames();})
+      }), ()=> {
+        this.changeSum();this.validateDuplicateNames(); 
+        (+index === 0) && this.setState(update(this.state, {errors: {members: {0: {deposit: { $set: ""}}}}}))
+      }
+    )
   }
 
+ 
+
  render() {
+
+  
+  console.log(this.state.errors.members);
     if (this.state.redirect) {
       return <Redirect to='/tasks'/>;
     }
