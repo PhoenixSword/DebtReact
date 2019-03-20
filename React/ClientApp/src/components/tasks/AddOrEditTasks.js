@@ -2,7 +2,7 @@ import React, { Component } from 'react';
 import { taskService } from "../services/TaskService";
 import { MDBBtn } from "mdbreact";
 import { Redirect } from 'react-router'
-import update from 'react-addons-update'; 
+import update from 'immutability-helper';
 
 const Member = (taskId) => 
 {
@@ -14,6 +14,18 @@ const Empty = () =>
   return {name: '', deposit: '', debt: ''}
 }
 
+const Errors = (length) => 
+{
+  var arr = [];
+      for (var i = 0; i < length; i++)
+          arr.push(Empty());
+
+  return {
+    name: '',
+    sum: '',
+    members: arr
+  }
+}
 
 export class AddOrEditTasks extends Component {
 
@@ -63,6 +75,8 @@ export class AddOrEditTasks extends Component {
       this.setState({
         task: response,
         errors: {
+          name: '',
+          sum: '',
           members: arr
         }
       });
@@ -79,6 +93,13 @@ export class AddOrEditTasks extends Component {
   componentWillUnmount() {
       clearTimeout(this.turnOffRedTimeout);
   }
+  checkErrors()
+  {
+    if (JSON.stringify(this.state.errors) == JSON.stringify(Errors(this.state.task.members.length)))
+    return false
+    return true
+  }
+
   validateName(value) {
     this.setState(prevState => ({
               task: {
@@ -99,20 +120,32 @@ export class AddOrEditTasks extends Component {
   }
 
   validateSum(value) {
-    this.setState(prevState => ({
-              task: {
-                  ...prevState.task,
-                  sum: value
-              }
-          }), ()=>{this.changeSum()})
+    var array = this.state.task.members;
+
+    //this.state.task.members[0].deposit = value;
+
     let error = '';
-    if (!value) error = 'Required'; else if(value < 0) error = "Min value is 0";
+    if (!value) error = 'Required'; 
+    if(value < 0) error = "Min value is 0";
+    var sum = 0;
+    for (let index = 0; index < array.length; index++) {
+      sum = +sum + +array[index].deposit;
+    }
+    if(value != sum) error = "Sum of deposit not equal sum";
     this.setState(prevState => ({
               errors: {
                   ...prevState.errors,
                   sum: error
               }
           }))
+
+    this.setState(update(this.state,{ task: {members: {0: {deposit: {$set: value}}}}}), () => this.setState(prevState => ({
+      task: {
+          ...prevState.task,
+          sum: value
+      }
+  }), () => this.changeSum()))
+    
   }
 
   validateMemberName(value, index, stateCopy)
@@ -121,7 +154,10 @@ export class AddOrEditTasks extends Component {
     if (!value) {
       error = 'Required';
     }
-    if (stateCopy.errors.members[index].name !== 'Duplicate') stateCopy.errors.members[index].name = error;
+    if (stateCopy.errors.members[index].name !== 'Duplicate') 
+    {
+      stateCopy.errors.members[index].name = error;
+    }
   }
 
   validateDuplicateNames()
@@ -148,7 +184,6 @@ export class AddOrEditTasks extends Component {
         return null;
       })
     }
-
     this.setState(stateCopy);
   }
 
@@ -156,28 +191,42 @@ export class AddOrEditTasks extends Component {
   {
     stateCopy.task.members[index].deposit = value;
     let error = '';
+    let sumError = '';
     if (!value) error = 'Required'; else if(value < 0) error = "Min value is 0";
 
+    var array = stateCopy.task.members;
+    var sum = this.calculateDepositSum(array, array.length);
+    var mainSum = stateCopy.task.sum;
+    if(mainSum != sum) sumError = "Sum of deposits not equal sum";
+
     stateCopy.errors.members[index].deposit = error;
+    stateCopy.errors.sum = sumError;
   }
 
   validateMemberDebt(value, index, stateCopy)
   {
     stateCopy.task.members[index].debt = value;
     let error = '';
+    let sumError = '';
     if (!value) error = 'Required'; else if(value < 0) error = "Min value is 0";
 
+    var array = stateCopy.task.members;
+    var sum = this.calculateDebtSum(array, array.length);
+    var mainSum = stateCopy.task.sum;
+    if(mainSum != sum) sumError = "Sum of debts not equal sum";
+
     stateCopy.errors.members[index].debt = error;
+    stateCopy.errors.sum = sumError;
   }
 
   changeSum() {
     var sumInput = this.state.task.sum;
     var depositInputs = this.state.task.members;
     if (depositInputs.length === 0) return;
-    depositInputs[0].deposit = sumInput;
+  
    if (this.debtEditInputs.length !== 0) {
      var debtsEditSum = 0;
-     debtsEditSum = this.CalculateDebtSum(this.debtEditInputs, this.debtEditInputs.length);
+     debtsEditSum = this.calculateDebtSumIndex(this.debtEditInputs, this.debtEditInputs.length);
      sumInput -= debtsEditSum;
    }
    var debtsInputs = [];
@@ -227,7 +276,7 @@ export class AddOrEditTasks extends Component {
     //this.sumValidator();
  }
 
-  CalculateDepositSum(inputs, length) {
+  calculateDepositSum(inputs, length) {
     var sum = 0;
     for (var iterator = 0; iterator < length; iterator++) {
       sum += parseFloat(inputs[iterator].deposit);
@@ -235,7 +284,7 @@ export class AddOrEditTasks extends Component {
     return parseFloat(sum.toFixed(2));
   }
 
-  CalculateDebtSum(inputs, length) {
+  calculateDebtSumIndex(inputs, length) {
     var sum = 0;
     for (var i = 0; i < inputs.length; i++) {
       sum += parseFloat(this.state.task.members[inputs[i]].debt);
@@ -243,6 +292,13 @@ export class AddOrEditTasks extends Component {
     return parseFloat(sum.toFixed(2));
   }
 
+  calculateDebtSum(inputs, length) {
+    var sum = 0;
+    for (var iterator = 0; iterator < length; iterator++) {
+      sum += parseFloat(inputs[iterator].deposit);
+    }
+    return parseFloat(sum.toFixed(2));
+  }
   changeDebt(index) {
     //this.sumValidator();
     if(this.debtEditInputs.indexOf(+index)===-1){
@@ -359,6 +415,8 @@ export class AddOrEditTasks extends Component {
     if (this.state.redirect) {
       return <Redirect to='/tasks'/>;
     }
+    console.log();
+    this.checkErrors();
     return (
       <div className="card">
         <h3 className="blue-gradient white-text card-header text-center font-weight-bold text-uppercase py-4">
@@ -374,7 +432,7 @@ export class AddOrEditTasks extends Component {
           <div className="mt-3 table-responsive text-center">
 
           <MDBBtn color="primary" className="float-left" onClick={this.add}>Add new</MDBBtn>
-          <MDBBtn color="success" className="float-left" onClick={this.save}>Save</MDBBtn>
+          <MDBBtn id="saveBtn" color="success" className="float-left" onClick={this.save} disabled={this.checkErrors()}>Save</MDBBtn>
             <table className="table">
               <thead className="blue-gradient white-text">
                 <tr>
@@ -412,3 +470,4 @@ export class AddOrEditTasks extends Component {
       );
   }
 }
+
