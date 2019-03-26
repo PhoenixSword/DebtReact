@@ -1,6 +1,5 @@
 import React, { Component } from 'react';
 import { debtService } from "../services/DebtService";
-import './Full-info.css';
 
 
 function Members(props) {
@@ -81,7 +80,7 @@ export class Full extends Component {
 
   render() {
     return (
-        <div className="card-body">
+        <div className="card-body fulldebts">
             <div id="table" className="table-responsive">
             <table className="table table-bordered text-center">
                 <colgroup span="1" className="colgroup"></colgroup>

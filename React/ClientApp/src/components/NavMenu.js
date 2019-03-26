@@ -2,7 +2,6 @@ import React, { Component } from 'react';
 import { Collapse, Container, Navbar, NavbarBrand, NavbarToggler, NavItem, NavLink } from 'reactstrap';
 import { Link } from 'react-router-dom';
 import {userService} from "./services/UserService.js";
-import './NavMenu.css';
 
 function Greeting(props) {
     if (userService.authorize()) {

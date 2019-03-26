@@ -8,7 +8,8 @@ import {
   MDBCardBody,
   MDBIcon,
   MDBCardHeader,
-  MDBBtn
+  MDBBtn,
+  MDBInput
 } from "mdbreact";
 
 import {userService} from "./services/UserService.js";
@@ -41,7 +42,7 @@ export class Register extends Component {
     }
     return (
       <MDBContainer>
-      <MDBRow className="justify-content-center">
+      <MDBRow className="justify-content-center register ">
         <MDBCol md="6">
           <MDBCard>
            <Alert message={this.state.alert} />
@@ -82,76 +83,76 @@ export class Register extends Component {
                   return (
                     <form onSubmit={handleSubmit}>
                     <div className="grey-text pt-3">
-                      <div className="input-group mb-2">
-                        <div className="input-group-prepend">
-                          <span className="input-group-text" id="basic-addon">
-                            <MDBIcon icon="at" />
-                          </span>
-                        </div>
-                        <input
+                     <div className="input-group justify-content-center">
+                        <MDBInput
                           id="email"
-                          placeholder="Enter your email"
-                          type="text"
+                          label="Enter your email"
+                          type="email"
+                          icon="envelope"
+                          group
                           value={values.email}
                           onChange={handleChange}
                           onBlur={handleBlur}
                           required 
+                          ref={node => (this.email = node)}
                           className={
                             errors.email && touched.email ? 'form-control text-input text-danger error' : 'form-control text-input'
                           }
-                        /></div>
+                          validate
+                          error="wrong"
+                          success="right"
+                          style={{width: '400px'}}
+                        />
                          {errors.email &&
                         touched.email && <div className="text-danger input-feedback">{errors.email}</div>}
-
-                      <div className="input-group mb-2">
-                        <div className="input-group-prepend">
-                          <span className="input-group-text" id="basic-addon">
-                            <MDBIcon icon="key" />
-                          </span>
                         </div>
-                      <input
-                        id="password"
-                        placeholder="Password"
-                        type="password"
-                        value={values.password}
-                        onChange={handleChange}
-                        onBlur={handleBlur}
-                        required 
-                        aria-label="Password" 
-                        aria-describedby="basic-addon"
-                        className={
-                          errors.password && touched.password ? 'form-control text-input text-danger error' : 'form-control text-input'
-                        }
-                      /></div>
+                       <div className="input-group m-0 justify-content-center">   
+                      <MDBInput
+                          id="password"
+                          label="Enter your password"
+                          type="password"
+                          icon="key"
+                          group
+                          value={values.password}
+                          onChange={handleChange}
+                          onBlur={handleBlur}
+                          required 
+                          ref={node => (this.password = node)}
+                          className={
+                            errors.password && touched.password ? 'form-control text-input text-danger error' : 'form-control text-input'
+                          }
+                          validate
+                          error="wrong"
+                          success="right"
+                          style={{width: '400px'}}
+                        /> 
                       {errors.password &&
                         touched.password && <div className="text-danger input-feedback">{errors.password}</div>}
-
-
-                        <div className="input-group mb-2">
-                        <div className="input-group-prepend">
-                          <span className="input-group-text" id="basic-addon">
-                            <MDBIcon icon="key" />
-                          </span>
                         </div>
-                      <input
-                        id="passwordConfirm"
-                        placeholder="Password Confirm"
-                        type="password"
-                        value={values.passwordConfirm}
-                        onChange={handleChange}
-                        onBlur={handleBlur}
-                        required 
-                        aria-label="PasswordConfirm" 
-                        aria-describedby="basic-addon"
-                        className={
-                          errors.passwordConfirm && touched.passwordConfirm ? 'form-control text-input text-danger error' : 'form-control text-input'
-                        }
-                      /></div>
+                         <div className="input-group m-0 justify-content-center">   
+                      <MDBInput
+                          id="passwordConfirm"
+                          label="Enter your password confirm"
+                          type="password"
+                          icon="key"
+                          group
+                          value={values.passwordConfirm}
+                          onChange={handleChange}
+                          onBlur={handleBlur}
+                          required 
+                          ref={node => (this.passwordConfirm = node)}
+                          className={
+                            errors.passwordConfirm && touched.passwordConfirm ? 'form-control text-input text-danger error' : 'form-control text-input'
+                          }
+                          validate
+                          error="wrong"
+                          success="right"
+                          style={{width: '400px'}}
+                        /> 
                       {errors.passwordConfirm &&
                         touched.passwordConfirm && <div className="text-danger input-feedback">{errors.passwordConfirm}</div>}
-
-
-                    </div>
+                        </div>
+                        </div>
                     <div className="text-center mt-4">
                       <MDBBtn
                         color="light-blue"

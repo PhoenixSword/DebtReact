@@ -1,6 +1,6 @@
 import React, { Component } from 'react';
 import { taskService } from "../services/TaskService";
-import { MDBBtn } from "mdbreact";
+import { MDBBtn, MDBInput } from "mdbreact";
 import { Redirect } from 'react-router'
 import update from 'immutability-helper';
 
@@ -22,7 +22,10 @@ const Errors = (length) =>
 
   return {
     name: '',
-    sum: '',
+    sum: {
+            deposit: '',
+            debt: ''
+          },
     members: arr
   }
 }
@@ -39,7 +42,7 @@ export class AddOrEditTasks extends Component {
         id: '00000000-0000-0000-0000-000000000000',
         userId: '00000000-0000-0000-0000-000000000000',
         name: '',
-        sum: 0,
+        sum: '',
         depositsMember: 0,
         debtsMember: 0,
         debts: [],
@@ -47,7 +50,10 @@ export class AddOrEditTasks extends Component {
       },
       errors:{
         name: '',
-        sum: '',
+        sum: {
+            deposit: '',
+            debt: ''
+          },
         members: []
       }
 
@@ -76,7 +82,10 @@ export class AddOrEditTasks extends Component {
         task: response,
         errors: {
           name: '',
-          sum: '',
+          sum: {
+            deposit: '',
+            debt: ''
+          },
           members: arr
         }
       });
@@ -95,7 +104,7 @@ export class AddOrEditTasks extends Component {
   }
   checkErrors()
   {
-    if (JSON.stringify(this.state.errors) == JSON.stringify(Errors(this.state.task.members.length)))
+    if (JSON.stringify(this.state.errors) === JSON.stringify(Errors(this.state.task.members.length)))
     return false
     return true
   }
@@ -120,32 +129,41 @@ export class AddOrEditTasks extends Component {
   }
 
   validateSum(value) {
-    var array = this.state.task.members;
-
-    //this.state.task.members[0].deposit = value;
-
-    let error = '';
-    if (!value) error = 'Required'; 
-    if(value < 0) error = "Min value is 0";
-    var sum = 0;
-    for (let index = 0; index < array.length; index++) {
-      sum = +sum + +array[index].deposit;
-    }
-    if(value != sum) error = "Sum of deposit not equal sum";
-    this.setState(prevState => ({
-              errors: {
-                  ...prevState.errors,
-                  sum: error
-              }
-          }))
-
     this.setState(update(this.state,{ task: {members: {0: {deposit: {$set: value}}}}}), () => this.setState(prevState => ({
       task: {
           ...prevState.task,
           sum: value
       }
-  }), () => this.changeSum()))
-    
+    }), () => 
+    {
+      this.changeSum(); 
+      var array = this.state.task.members;
+      let error = '';
+      if (!value) error = 'Required'; 
+      if(value < 0) error = "Min value is 0";
+      var sum = 0;
+      for (let index = 0; index < array.length; index++) {
+        sum = +sum + +array[index].deposit;
+      }
+      if(+value !== sum) {
+        error = "Sum of deposits not equal sum";
+        document.getElementById("sum").setCustomValidity("Sum of deposits not equal sum");
+      }else{
+        document.getElementById("sum").setCustomValidity("");
+      }
+
+       this.setState(
+        prevState => ({
+            errors: {
+                ...prevState.errors,
+                sum: {
+                    ...prevState.errors.sum,
+                    deposit: error
+                  },
+            }
+        }))
+     
+    }))
   }
 
   validateMemberName(value, index, stateCopy)
@@ -178,11 +196,18 @@ export class AddOrEditTasks extends Component {
       if (index.name !== 'Required') index.name = '';
       return null;
     });
+    var mas = document.getElementsByClassName("name");
     if (dup.length>0) {
         dup.map(function(index, elem) {
+        mas[index].setCustomValidity("Duplicate")
         stateCopy.errors.members[index].name = "Duplicate";
         return null;
       })
+    }
+    else{
+      for (let item of mas) {
+        item.setCustomValidity("")
+      }
     }
     this.setState(stateCopy);
   }
@@ -197,10 +222,18 @@ export class AddOrEditTasks extends Component {
     var array = stateCopy.task.members;
     var sum = this.calculateDepositSum(array, array.length);
     var mainSum = stateCopy.task.sum;
-    if(mainSum != sum) sumError = "Sum of deposits not equal sum";
+    if(+mainSum !== sum) 
+    {
+      document.getElementById("sum").setCustomValidity("Sum of deposits not equal sum");
+      sumError = "Sum of deposits not equal sum";
+    }
+    else
+    {
+      document.getElementById("sum").setCustomValidity("");
+    }
 
     stateCopy.errors.members[index].deposit = error;
-    stateCopy.errors.sum = sumError;
+    stateCopy.errors.sum.deposit = sumError;
   }
 
   validateMemberDebt(value, index, stateCopy)
@@ -213,10 +246,17 @@ export class AddOrEditTasks extends Component {
     var array = stateCopy.task.members;
     var sum = this.calculateDebtSum(array, array.length);
     var mainSum = stateCopy.task.sum;
-    if(mainSum != sum) sumError = "Sum of debts not equal sum";
-
+   if(+mainSum !== sum) 
+    {
+      document.getElementById("sum").setCustomValidity("Sum of debts not equal sum");
+      sumError = "Sum of debts not equal sum";
+    }
+    else
+    {
+      document.getElementById("sum").setCustomValidity("");
+    }
     stateCopy.errors.members[index].debt = error;
-    stateCopy.errors.sum = sumError;
+    stateCopy.errors.sum.debt = sumError;
   }
 
   changeSum() {
@@ -237,42 +277,61 @@ export class AddOrEditTasks extends Component {
    var debtsLength = debtsInputs.length;
    if(debtsLength===0) return;
    var basicValueWithError = parseFloat((sumInput / debtsLength).toFixed(2));
-
-   var sumWithError = basicValueWithError * debtsLength;
-
-   var error = parseFloat((sumInput - sumWithError).toFixed(2));
-
    var iterator = 0;
-   if (error !== 0) {
-     var sign = (error >= 0) ? true : false;
-     while (error !== 0) {
-       switch (sign) {
-         case false:
-           error = parseFloat((error + 0.01).toFixed(2));
-           debtsInputs[iterator].debt = parseFloat((basicValueWithError - 0.01).toFixed(2));
-           break;
+   if (basicValueWithError < 0)
+   {
+     this.setState(prevState => ({
+              errors: {
+                  ...prevState.errors,
+                  sum: {
+                    ...prevState.errors.sum,
+                    debt: "Sum of debts not equal sum"
+                  }, 
+              }
+          }))
+       basicValueWithError = 0;
+    }
+    else
+    {
+      this.setState(prevState => ({
+              errors: {
+                  ...prevState.errors,
+                  sum: {
+                    ...prevState.errors.sum,
+                    debt: ""
+                  }, 
+              }
+          }))
+       var sumWithError = basicValueWithError * debtsLength;
 
-         case true:
-           error = parseFloat((error - 0.01).toFixed(2));
-           debtsInputs[iterator].debt = parseFloat((basicValueWithError + 0.01).toFixed(2));
-           break;
-          default:
-            break;
+       var error = parseFloat((sumInput - sumWithError).toFixed(2));
+
+       if (error !== 0) {
+         var sign = (error >= 0) ? true : false;
+         while (error !== 0) {
+           switch (sign) {
+             case false:
+               error = parseFloat((error + 0.01).toFixed(2));
+               debtsInputs[iterator].debt = parseFloat((basicValueWithError - 0.01).toFixed(2));
+               break;
+
+             case true:
+               error = parseFloat((error - 0.01).toFixed(2));
+               debtsInputs[iterator].debt = parseFloat((basicValueWithError + 0.01).toFixed(2));
+               break;
+              default:
+                break;
+           }
+           iterator++;
+         }
        }
-       iterator++;
      }
-   }
 
     while (iterator < debtsLength) {
       debtsInputs[iterator].debt = basicValueWithError;
      iterator++;
     }
-    this.setState(prevState => ({
-      task: {
-          ...prevState.task,
-          members: this.state.task.members
-      }
-  }))
+    
     //this.sumValidator();
  }
 
@@ -295,7 +354,7 @@ export class AddOrEditTasks extends Component {
   calculateDebtSum(inputs, length) {
     var sum = 0;
     for (var iterator = 0; iterator < length; iterator++) {
-      sum += parseFloat(inputs[iterator].deposit);
+      sum += parseFloat(inputs[iterator].debt);
     }
     return parseFloat(sum.toFixed(2));
   }
@@ -306,6 +365,7 @@ export class AddOrEditTasks extends Component {
     }
   }
 
+
   onChangeTask(e) {
     var val = e.target.value;
     switch(e.target.name)
@@ -314,7 +374,16 @@ export class AddOrEditTasks extends Component {
         this.validateName(val);
         break;
       case "sum":
+
+      if (this.state.task.members.length > 0)
         this.validateSum(val);
+      else
+        this.setState(prevState => ({
+          task: {
+              ...prevState.task,
+              sum: val
+          }
+        }));
         break;
       default:
         break;
@@ -323,7 +392,7 @@ export class AddOrEditTasks extends Component {
 
   onChangeMembers(e){
     var val = e.target.value;
-    var index = e.target.parentNode.parentNode.id;
+    var index = e.target.parentNode.parentNode.parentNode.id;
 
     var stateCopy = Object.assign({}, this.state);
     stateCopy.task.members = stateCopy.task.members.slice();
@@ -374,7 +443,7 @@ export class AddOrEditTasks extends Component {
   }
 
   remove(e){
-    var index = e.target.parentNode.parentNode.id;
+    var index = e.target.parentNode.parentNode.parentNode.id;
     if (this.debtEditInputs.indexOf(+index)!==-1)
     {
       this.debtEditInputs.splice(this.debtEditInputs.indexOf(+index), 1);
@@ -384,11 +453,8 @@ export class AddOrEditTasks extends Component {
       this.debtEditInputs[i] = this.debtEditInputs[i]-1;
     }
     
-
     this.state.errors.members.splice(index, 1);
     this.state.task.members.splice(index, 1)
-
-
 
     this.setState(prevState => ({
           task: {
@@ -400,7 +466,8 @@ export class AddOrEditTasks extends Component {
               members: this.state.errors.members
           }
       }), ()=> {
-        this.changeSum();this.validateDuplicateNames(); 
+        this.changeSum();
+        this.validateDuplicateNames(); 
         (+index === 0) && this.setState(update(this.state, {errors: {members: {0: {deposit: { $set: ""}}}}}))
       }
     )
@@ -409,25 +476,38 @@ export class AddOrEditTasks extends Component {
  
 
  render() {
-
-  
-  console.log(this.state.errors.members);
     if (this.state.redirect) {
       return <Redirect to='/tasks'/>;
     }
-    console.log();
     this.checkErrors();
     return (
-      <div className="card">
+      <form className="was-validated" noValidate>
+      <div className="card addoredit">
         <h3 className="blue-gradient white-text card-header text-center font-weight-bold text-uppercase py-4">
-        Tasks
+        {this.state.task.name && <span>EDIT {this.state.task.name}</span>}
+        {!this.state.task.name && <span>ADD TASK</span>}
         </h3>
         <div className="card-body">
         <div className="form-inline">
-          <input name="name" value={this.state.task.name} onChange={this.onChangeTask} className="form-control"/>
-          {this.state.errors.name && <span className="text-danger">{this.state.errors.name}</span>}
-          <input name="sum" type="number" value={this.state.task.sum} onChange={this.onChangeTask} className="form-control"/>
-          {this.state.errors.sum && <span className="text-danger">{this.state.errors.sum}</span>}
+          <input name="name" value={this.state.task.id} readOnly type="hidden"/>
+          <input name="name" value={this.state.task.userId} readOnly type="hidden"/>
+
+          <div className="form-inline mt-5 mx-5 d-flex flex-column">
+            <div className="md-form md-outline form-group mt-2 form-lg mb-0">
+              <MDBInput name="name" label="Task Name" value={this.state.task.name} 
+              onChange={this.onChangeTask} className="form-control form-control-lg nameInput" required/>
+              {this.state.errors.name && <span className="invalid-feedback">{this.state.errors.name}</span>}
+            </div>
+          </div>
+          <div className="form-inline mt-5 mx-5 d-flex flex-column">
+            <div className="md-form md-outline form-group mt-2 form-lg mb-0">
+            <MDBInput id="sum" type="number" min="0" max="999999999" name="sum" label="Sum" 
+              value={`${this.state.task.sum}`} onChange={this.onChangeTask} className="form-control form-control-lg" required/>
+              {this.state.errors.sum.deposit && <span className="invalid-feedback">{this.state.errors.sum.deposit}</span>}
+              {this.state.errors.sum.debt && <span className="invalid-feedback">{this.state.errors.sum.debt}</span>}
+          
+            </div>
+          </div>
           </div>
           <div className="mt-3 table-responsive text-center">
 
@@ -446,16 +526,16 @@ export class AddOrEditTasks extends Component {
               {this.state.task.members.map((item, index) =>
                 <tr key={index} id={index}>
                   <td>
-                    <input name ="name" value={item.name} onChange={this.onChangeMembers} className="form-control"/>
-                    {this.state.errors.members[index].name && <span className="text-danger">{this.state.errors.members[index].name}</span>}
+                    <MDBInput required name ="name" type="text" value={`${item.name}`} onChange={this.onChangeMembers} className="form-control name"/>
+                    {this.state.errors.members[index].name && <span className="invalid-feedback">{this.state.errors.members[index].name}</span>}
                   </td>
                   <td>
-                    <input name ="deposit" type="number" value={item.deposit} onChange={this.onChangeMembers} className="form-control"/>
-                    {this.state.errors.members[index].deposit && <span className="text-danger">{this.state.errors.members[index].deposit}</span>}
+                    <MDBInput required name ="deposit" type="number" value={`${item.deposit}`} onChange={this.onChangeMembers} className="form-control"/>
+                    {this.state.errors.members[index].deposit && <span className="invalid-feedback">{this.state.errors.members[index].deposit}</span>}
                     </td>
                   <td>
-                    <input name ="debt" type="number" value={item.debt} onChange={this.onChangeMembers} className="form-control"/>
-                    {this.state.errors.members[index].debt && <span className="text-danger">{this.state.errors.members[index].debt}</span>}
+                    <MDBInput required name ="debt" type="number" value={`${item.debt}`} onChange={this.onChangeMembers} className="form-control"/>
+                    {this.state.errors.members[index].debt && <span className="invalid-feedback">{this.state.errors.members[index].debt}</span>}
                   </td>
                   <td>
                       <MDBBtn style={{padding: "5px 20px"}} onClick={(e) => {this.setState({remove: true});this.remove(e)}} color="danger" disabled={this.state.remove}>Remove</MDBBtn>
@@ -467,6 +547,7 @@ export class AddOrEditTasks extends Component {
           </div>
         </div>
       </div>
+      </form>
       );
   }
 }

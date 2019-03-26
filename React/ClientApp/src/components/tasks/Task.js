@@ -61,14 +61,12 @@ export class Task extends Component {
 
   render() {
     return (
-      <div className="card">
-        <h3 className="blue-gradient white-text card-header text-center font-weight-bold text-uppercase py-4">
-        Tasks
-        </h3>
+      <div className="card tasks">
+        <h3 class="blue-gradient card-header text-center font-weight-bold text-uppercase py-4">Tasks</h3>
         <div className="card-body">
           <div className="table-responsive text-center">
-            <table className="table">
-              <thead className="">
+            <table class="table table-bordered text-center">
+              <thead class="blue-gradient white-text">
                 <tr>
                   <th className="">Name</th>
                   <th className="">Money</th>

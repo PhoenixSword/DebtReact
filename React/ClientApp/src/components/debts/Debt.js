@@ -1,6 +1,6 @@
 import React, { Component } from 'react';
 import { debtService } from "../services/DebtService";
-
+import {MDBIcon} from "mdbreact";
 
 function DebtItem(props) {
 
@@ -11,8 +11,8 @@ function DebtItem(props) {
       <tbody>
         {debts.map((post) =>
         <tr key={post.id}>
-            {props.debtItems.name.toLowerCase() === post.member1.toLowerCase() ? <td>{post.member2}</td> : <td>{post.member1}</td>}
-            <td>{props.debtItems.name.toLowerCase() === post.member1.toLowerCase() ? 'His debt is ' + post.money : 'Your debt is ' + post.money}</td>
+            <td>{props.debtItems.name.toLowerCase() === post.member1.toLowerCase() ? <span>{post.member2}</span> : <span>{post.member1}</span>}</td>
+            <td>{props.debtItems.name.toLowerCase() === post.member1.toLowerCase() ? <span>His debt is <span className="green-text">{post.money} <MDBIcon icon="money-bill-wave"/></span></span>:<span>Your debt is <span className="red-text">{post.money} <MDBIcon icon="money-bill-wave"/></span></span>}</td>
         </tr>
         )}
       </tbody>
@@ -44,14 +44,15 @@ export class Debt extends Component {
 
   render() {
     return (
-      <div className="card">
+      <div className="card debts">
         <h3 className="purple-gradient white-text card-header text-center font-weight-bold text-uppercase py-4">
         {this.state.data.name}
         </h3>
         <div className="card-body text-center">
           <div className="table-responsive">
             <table className="table">
-              <thead className="">
+             <colgroup span="1" class="colgroup"></colgroup>
+              <thead className="purple-gradient white-text">
                 <tr>
                   <th className="">Name</th>
                   <th className="">Money</th>
