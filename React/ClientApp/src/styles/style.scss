@@ -1,0 +1,442 @@
+﻿/*a.navbar-brand {
+  white-space: normal;
+  text-align: center;
+  word-break: break-all;
+}
+
+html {
+  font-size: 14px;
+}
+@media (min-width: 768px) {
+  html {
+    font-size: 16px;
+  }
+}
+
+.box-shadow {
+  box-shadow: 0 .25rem .75rem rgba(0, 0, 0, .05);
+}
+
+button {
+	border-radius: 30px!important;
+}
+.btn{
+	border-radius: 30px!important;
+}
+
+body{
+	background: url('~/bg.jpg')no-repeat fixed;
+  background-size: cover;
+}
+*/
+
+
+
+
+/* You can add global styles to this file, and also import other style files */
+
+/* Please see documentation at https://docs.microsoft.com/aspnet/core/client-side/bundling-and-minification\ 
+for details on configuring this project to bundle and minify static web assets. */
+body {
+  background: url("~/bg.jpg")no-repeat fixed;
+  background-size: cover;
+}
+
+/* Wrapping element */
+/* Set some basic padding to keep content from hitting the edges */
+.body-content {
+  padding-left: 15px;
+  padding-right: 15px;
+}
+
+/* Carousel */
+.carousel-caption p {
+  font-size: 20px;
+  line-height: 1.4;
+}
+
+/* Make .svg files in the carousel display properly in older browsers */
+.carousel-inner .item img[src$=".svg"] {
+  width: 100%;
+}
+
+/* QR code generator */
+#qrCode {
+  margin: 15px;
+}
+
+/* Hide/rearrange for smaller screens */
+@media screen and (max-width: 767px) {
+  /* Hide captions */
+  .carousel-caption {
+    display: none;
+  }
+}
+
+.btn-default {
+  cursor: pointer;
+  color: #000;
+  background-color: #d3d3d3;
+  border-color: #d5d5d5;
+}
+
+.starter-template {
+  padding: 3rem 1.5rem;
+  text-align: center;
+}
+
+.text-black {
+  color: #000;
+}
+
+.removetask {
+  width: 1px;
+}
+
+.removetask > button {
+  margin: 3px;
+  width: 45px;
+  height: 45px;
+}
+
+.btn-validation, label[for=Name], label[for=Sum] {
+  margin-bottom: 24px;
+}
+
+.field-validation-valid {
+  height: 24px;
+}
+
+.field-validation-error {
+  color: #f00;
+}
+
+.validation-summary-errors {
+  color: #f00;
+  font-weight: bold;
+}
+
+.input-validation-error {
+  border: 1px solid #f00;
+  box-shadow: 0 0 0 0.2rem rgba(255, 0, 0, 0.25);
+}
+
+.input-validation-error:focus {
+  border: 1px solid #f00;
+  box-shadow: 0 0 0 0.2rem rgba(255, 0, 0, 0.25) !important;
+}
+
+input[type="checkbox"].input-validation-error {
+  outline: 1px solid #f00;
+}
+
+.memberstable th {
+  padding: 0 24px;
+  font-size: 20px;
+  text-align: center;
+  width: 217px;
+}
+
+.text-danger-name, .text-danger-sum {
+  color: #ff3547 !important;
+  min-height: 43px;
+}
+.text-danger {
+
+  font-size: 15px;
+  min-height: 21px;
+}
+
+.removemember {
+  margin-bottom:24px;
+}
+
+.notfound{
+  font-size: 64px;
+  color: lightslategray;
+}
+
+.tdmember{
+  display: inline-block;
+  border: 0!important;
+}
+
+
+@media (min-width: 768px) {
+  .view {
+    overflow: visible;
+    margin-top: -56px;
+  }
+}
+
+.navbar {
+  z-index: 1;
+  background-color: transparent;
+  margin-bottom: 2rem;
+}
+
+
+.top-nav-collapse {
+  background-color: #4285F4;
+}
+
+@media only screen and (max-width: 768px) {
+  .navbar {
+    background-color: #4285F4;
+  }
+}
+
+.md-form .form-control {
+  padding: 0.5rem 0 0.55rem 0!important;
+  }
+
+.btn{
+  border-radius: 3rem!important;
+}
+table .md-form {
+   margin-bottom: 0!important;
+}
+
+.removemember {
+  width: 1px;
+  padding:0!important;
+}
+
+.md-outline{
+  .error-message{
+    margin-top: 10px;
+  }
+}
+.md-outline .form-control {
+  padding: 0.5rem 0.5rem 0.5rem 0.6rem !important;
+}
+
+.debttable label, th{
+  font-size: 20px !important;
+}
+.card-header{
+  color: rgba(255, 255, 255, 0.95)!important;
+}
+
+#divMembers .btn{
+  min-width:118px;
+}
+
+body::-webkit-scrollbar-track {
+  background: transparent;
+  border-radius: 10px;
+}
+
+body::-webkit-scrollbar {
+  width: 8px;
+  background: transparent;
+}
+
+body::-webkit-scrollbar-thumb {
+  border-radius: 10px;
+  background: linear-gradient(40deg, #45cafc, #303f9f) !important;
+}
+
+@media only screen and (max-width: 768px){
+  .navbar {
+    color: white !important;
+    background: linear-gradient(90deg, #45cafc, #303f9f) !important;
+
+    a {
+      color: white !important;
+    }
+
+    .navbar-toggler-icon {
+      background: url("data:image/svg+xml;charset=utf8,<svg viewBox='0 0 32 32' xmlns='http://www.w3.org/2000/svg'><path stroke='rgba(255, 255, 255, 0.9)' stroke-width='2' stroke-linecap='round' stroke-miterlimit='10' d='M4 8h24M4 16h24M4 24h24'/></svg>") !important;
+    }
+  }
+}
+
+
+//DEBTS
+.debts 
+{
+  .colgroup {
+  background: linear-gradient(183deg, #ff6ec4, #7873f5) !important;
+  }
+  td:first-child {
+  font-weight: bold;
+  font-size: 20px;
+  color: white;
+  }
+}
+
+//FULLDEBTS
+.fulldebts{
+  table td:first-child, th {
+    font-weight: bold;
+  }
+
+  table {
+    margin-bottom: 0;
+    overflow: hidden;
+  }
+  tr:hover {
+    background-color: rgba(0, 234, 255, 0.15)!important;
+  }
+
+  td, th {
+    font-size: 25px;
+    position: relative;
+    text-align: center;
+    vertical-align: middle !important;
+    width: 3rem!important;
+    height: 3rem!important;
+    padding: 1rem!important;
+  }
+
+  td::before {
+    content: "";
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(255, 255, 255, 0.6);
+    z-index: -10;
+  }
+
+  td:hover::after,
+  th:hover::after {
+    content: "";
+    position: absolute;
+    background-color: rgba(0, 234, 255, 0.15) !important;
+    left: 0;
+    top: -5000px;
+    height: 10000px;
+    width: 100%;
+    z-index: -1;
+  }
+
+  .colgroup {
+    background: linear-gradient(190deg, #2096ff, #05ffa3) !important;
+    z-index: 5;
+  }
+
+  td:first-child {
+    font-weight: bold;
+    font-size: 20px;
+    color: white;
+  }
+
+
+
+  #table::-webkit-scrollbar-track {
+    background: transparent;
+    border-radius: 10px;
+  }
+
+  #table::-webkit-scrollbar {
+    height: 8px;
+    background: transparent;
+  }
+
+  #table::-webkit-scrollbar-thumb {
+    border-radius: 10px;
+    background: linear-gradient(40deg, #2096ff, #05ffa3) !important;
+  }
+}
+
+
+//TASKS
+.tasks{
+  td {
+    font-size: 20px;
+  }
+  #table::-webkit-scrollbar-track {
+    background: transparent;
+    border-radius: 10px;
+  }
+
+  #table::-webkit-scrollbar {
+    height: 8px;
+    background: transparent;
+  }
+
+  #table::-webkit-scrollbar-thumb {
+    border-radius: 10px;
+    background: linear-gradient(40deg, #45cafc, #303f9f) !important;
+  }
+
+}
+//ADDOREDIT
+
+.addoredit{
+
+  .form-control-lg:valid {
+    border-color: #28a745!important;
+  }
+
+  .form-control-lg:invalid {
+    border-color: #dc3545!important;
+  }
+
+  .form-control-lg:focus {
+    border-color: #4285f4!important;
+  }
+
+
+  .colgroup {
+    background: linear-gradient(183deg, #ff6ec4, #7873f5) !important;
+  }
+
+  // td:first-child {
+  //   font-weight: bold;
+  //   font-size: 20px;
+  //   color: white;
+  // }
+
+  input[name=sum]{
+    width: 245px;
+  }
+
+  #table::-webkit-scrollbar-track {
+    background: transparent;
+    border-radius: 10px;
+  }
+
+  #table::-webkit-scrollbar {
+    height: 8px;
+    background: transparent;
+  }
+
+  #table::-webkit-scrollbar-thumb {
+    border-radius: 10px;
+    background: linear-gradient(40deg, #45cafc, #303f9f) !important;
+  }
+
+}
+
+//LOGIN
+.login{
+  .md-form .validate {
+    margin-bottom: 0!important;
+}
+}
+
+//REGISTER
+.register{
+  .md-form .validate {
+    margin-bottom: 0!important;
+}
+}
+
+.invalid-feedback{
+  display:block!important;
+}
+
+.md-form{
+  margin-bottom:0!important;
+}
+
+@media (min-width: 576px)
+{
+  .form-inline .form-group {
+    display: block;
+  }
+}
